@@ -1,15 +1,23 @@
 package edu.coloradomesa.mytutor;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String APP = "MyTutor";
+    private Prefs prefs = new Prefs(this);
+    private User user = new User(this);
+
+    public static final int LOGIN_REQUEST = 1;
 
     private TextView mTextMessage;
     private MenuView.ItemView mScheduleItemView;
@@ -38,6 +46,48 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        Log.i(APP,"request = " + requestCode + " result = " + resultCode + " (ok=" + RESULT_OK + ")");
+        switch(requestCode) {
+            case LOGIN_REQUEST:
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Log.i(APP, "user is " + prefs.user());
+
+                // The user picked a contact.
+                // The Intent's data Uri identifies which contact was selected.
+
+                // Do something with the contact here (bigger example below)
+            } else {
+                login();
+            }
+            break;
+            default:
+                Log.i(APP, "no result handler");
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_logout:
+                logout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -47,6 +97,22 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!user.authenticated()) { login(); }
+    }
+
+    void login() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, LOGIN_REQUEST);
+    }
+
+    void logout() {
+        user.logout();
+        recreate();
     }
 
 }
