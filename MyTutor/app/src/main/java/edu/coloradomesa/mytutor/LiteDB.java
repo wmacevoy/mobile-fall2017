@@ -18,6 +18,14 @@ import static edu.coloradomesa.mytutor.Util.eq;
  */
 
 public class LiteDB extends SQLiteOpenHelper implements AutoCloseable {
+    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < LiteDB > {
+        Context mContext;
+        Lazy(Context context) {
+            mContext = context;
+        }
+        LiteDB create() { return new LiteDB(mContext); }
+    }
+
     static class SCHEMA {
         public static final String DATABASE_NAME = "lite.db";
         public static final int DATABASE_VERSION = 1;

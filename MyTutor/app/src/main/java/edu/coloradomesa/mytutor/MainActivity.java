@@ -12,10 +12,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CoreActivity {
     public static final String APP = "MyTutor";
-    private Prefs prefs = new Prefs(this);
-    private User user = new User(this);
 
     public static final int LOGIN_REQUEST = 1;
 
@@ -53,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             case LOGIN_REQUEST:
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                Log.i(APP, "user is " + prefs.user());
+                Log.i(APP, "user is " + user().user());
 
                 // The user picked a contact.
                 // The Intent's data Uri identifies which contact was selected.
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!user.authenticated()) { login(); }
+        if (!user().authenticated()) { login(); }
     }
 
     void login() {
@@ -111,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void logout() {
-        user.logout();
+        user().logout();
         recreate();
     }
 

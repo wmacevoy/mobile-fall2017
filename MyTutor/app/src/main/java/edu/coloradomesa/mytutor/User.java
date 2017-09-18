@@ -7,16 +7,22 @@ import static edu.coloradomesa.mytutor.Util.*;
  * Created by wmacevoy on 9/12/17.
  */
 
-public class User implements AutoCloseable {
-    Prefs mPrefs;
+public class User {
+    Prefs.Lazy mPrefs;
+    Prefs prefs() { return mPrefs.self(); }
 
-    @Override public void close() {
-        mPrefs.close();
+    User(Prefs.Lazy prefs) {
+        mPrefs=prefs;
     }
 
-    User(Context context) {
-        mPrefs=new Prefs(context);
+    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < User > {
+        Prefs.Lazy mPrefs;
+        Lazy(Prefs.Lazy prefs) {
+            mPrefs = prefs;
+        }
+        User create() { return new User(mPrefs); }
     }
+
 
     boolean exists(String user) {
         return eq(user, "foo@example.com") || eq(user,"bar@example.com") || eq(user,"admin@localhost");
@@ -35,33 +41,33 @@ public class User implements AutoCloseable {
         switch(user) {
             case "foo@example.com":
             case "bar@example.com":
-                mPrefs.authenticated(true);
-                mPrefs.user(user);
-                mPrefs.groups("users");
-                mPrefs.save();
+                prefs().authenticated(true);
+                prefs().user(user);
+                prefs().groups("users");
+                prefs().save();
                 break;
             case "admin@localhost":
-                mPrefs.authenticated(true);
-                mPrefs.user("admin@localhost");
-                mPrefs.groups("admins","users");
-                mPrefs.save();
+                prefs().authenticated(true);
+                prefs().user("admin@localhost");
+                prefs().groups("admins","users");
+                prefs().save();
                 break;
             default:
                 logout();
         }
-        return mPrefs.authenticated();
+        return prefs().authenticated();
     }
 
     void logout() {
-        mPrefs.authenticated(false);
-        mPrefs.user(null);
-        mPrefs.groups(new String[] {});
-        mPrefs.save();
+        prefs().authenticated(false);
+        prefs().user(null);
+        prefs().groups(new String[] {});
+        prefs().save();
     }
 
-    boolean authenticated() { return mPrefs.authenticated(); }
-    String user() { return mPrefs.user(); }
-    boolean isUser() { return mPrefs.groups().contains("users"); }
-    boolean isAdmin() { return mPrefs.groups().contains("admins"); }
+    boolean authenticated() { return mPrefs.self().authenticated(); }
+    String user() { return mPrefs.self().user(); }
+    boolean isUser() { return mPrefs.self().groups().contains("users"); }
+    boolean isAdmin() { return mPrefs.self().groups().contains("admins"); }
 }
 

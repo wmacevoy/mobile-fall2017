@@ -38,8 +38,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-    User user = new User(this);
+public class LoginActivity extends CoreActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -315,8 +314,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            if (user.exists(mEmail)) {
-                return user.authenticate(mEmail, mPassword);
+            if (mModel.user().exists(mEmail)) {
+                return user().authenticate(mEmail, mPassword);
             }
 
             // TODO: register the new account here.
@@ -329,7 +328,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                user.login(mEmail);
+                user().login(mEmail);
                 LoginActivity.this.setResult(RESULT_OK);
                 finish();
 

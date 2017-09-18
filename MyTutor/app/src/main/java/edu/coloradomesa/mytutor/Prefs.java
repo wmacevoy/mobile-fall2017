@@ -13,6 +13,14 @@ import static edu.coloradomesa.mytutor.Util.*;
  */
 
 public class Prefs implements AutoCloseable {
+    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < Prefs > {
+        Context mContext;
+        Lazy(Context context) {
+            mContext = context;
+        }
+        Prefs create() { return new Prefs(mContext); }
+    }
+
     public static final String PREFERENCES = "preferences";
 
     private Context mContext;
@@ -46,11 +54,11 @@ public class Prefs implements AutoCloseable {
     public static final String AUTHENTICATED = "authenticated";
     public static final boolean AUTHENTICAED_DEFAULT = false;
 
-    boolean authenticated() {
+    public boolean authenticated() {
         return preferences().getBoolean(AUTHENTICATED,AUTHENTICAED_DEFAULT);
     }
 
-    void authenticated(boolean value) {
+    public void authenticated(boolean value) {
         if (authenticated() != value) {
             editor().putBoolean(AUTHENTICATED, value);
         }
@@ -58,12 +66,12 @@ public class Prefs implements AutoCloseable {
 
     public static final String USER = "user";
     public static final String USER_DEFAULT = null;
-    String user() {
+    public String user() {
         return preferences().getString(USER, USER_DEFAULT);
     }
 
 
-    void user(String value) {
+    public void user(String value) {
         if (!eq(user(),value)) {
             editor().putString(USER, value);
         }
@@ -71,23 +79,23 @@ public class Prefs implements AutoCloseable {
 
     public static final String GROUPS = "groups";
     public static final Set<String> GROUPS_DEFAULT = new HashSet<String>();
-    Set<String> groups() {
+    public Set<String> groups() {
         return preferences().getStringSet(GROUPS,GROUPS_DEFAULT);
     }
 
-    void groups(Set<String> value) {
+    public void groups(Set<String> value) {
         if (!groups().equals(value)) {
             editor().putStringSet(GROUPS, value);
         }
     }
 
-    void groups(String... values) {
+    public void groups(String... values) {
         HashSet<String> valueAsSet = new HashSet<String>();
         for (String group : values) { valueAsSet.add(group); }
         groups(valueAsSet);
     }
 
-    void cancel() {
+    public void cancel() {
         if (mEditor != null) {
             synchronized (this) {
                 if (mEditor != null) {
@@ -98,7 +106,7 @@ public class Prefs implements AutoCloseable {
 
     }
 
-    void save() {
+    public void save() {
         if (mEditor != null) {
             synchronized (this) {
                 if (mEditor != null) {

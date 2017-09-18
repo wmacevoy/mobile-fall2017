@@ -8,34 +8,22 @@ import java.util.ArrayList;
  * Created by wmacevoy on 9/13/17.
  */
 
-public class Courses implements AutoCloseable {
-    private Context mContext;
-    private LiteDB mLiteDB = null;
+public class Courses {
+    private LiteDB.Lazy mLiteDB;
+    public LiteDB liteDB() { return mLiteDB.self(); }
 
-    Courses(Context context) {
-        mContext = context;
+    public Courses(LiteDB.Lazy liteDB) {
+        mLiteDB = liteDB;
     }
 
-    public LiteDB liteDB() {
-        if (mLiteDB == null) {
-            synchronized (this) {
-                if (mLiteDB == null) {
-                    mLiteDB = new LiteDB(mContext);
-                }
-            }
+    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < Courses > {
+        LiteDB.Lazy mLiteDB;
+        Lazy(LiteDB.Lazy liteDB) {
+            mLiteDB = liteDB;
         }
-        return mLiteDB;
+        Courses create() { return new Courses(mLiteDB); }
     }
 
-    @Override
-    public void close() {
-        synchronized (this) {
-            if (mLiteDB != null) {
-                mLiteDB.close();
-            }
-            mLiteDB = null;
-        }
-    }
 
     public static final int CACHE_TIMEOUT_MILLISECONDS = 1000;
     private long mAllTimeout = Long.MIN_VALUE;
@@ -54,7 +42,7 @@ public class Courses implements AutoCloseable {
     public void clear() {
         synchronized (this) {
             liteDB().courses().reset();
-            mAllTimeout = Long.MIN_VALUE;
+            if (mAll != null) mAll.clear();
         }
     }
 
@@ -66,7 +54,7 @@ public class Courses implements AutoCloseable {
             Course anyIdCourse = new Course(-1, course.mDepartment, course.mNumber);
             if (!all().contains(anyIdCourse)) {
                 liteDB().courses().insert(anyIdCourse);
-                mAllTimeout = Long.MIN_VALUE;
+                if (mAll != null) { mAll.add(anyIdCourse); }
             }
         }
     }
@@ -78,14 +66,21 @@ public class Courses implements AutoCloseable {
     public void remove(Course course) {
         synchronized (this) {
             liteDB().courses().delete(course);
-            mAllTimeout = Long.MIN_VALUE;
+            if (mAll != null) { mAll.remove(course); }
         }
     }
 
     public void remove(long id) {
         synchronized (this) {
             liteDB().courses().delete(id);
-            mAllTimeout = Long.MIN_VALUE;
+            if (mAll != null) {
+                for (int i = 0; i < mAll.size(); ++i) {
+                    if (mAll.get(i).mId == id) {
+                        mAll.remove(i);
+                        return;
+                    }
+                }
+            }
         }
     }
 
