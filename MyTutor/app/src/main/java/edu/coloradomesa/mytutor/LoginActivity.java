@@ -314,7 +314,7 @@ public class LoginActivity extends CoreActivity implements LoaderCallbacks<Curso
                 return false;
             }
 
-            if (mModel.user().exists(mEmail)) {
+            if (user().exists(mEmail)) {
                 return user().authenticate(mEmail, mPassword);
             }
 

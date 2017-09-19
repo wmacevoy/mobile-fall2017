@@ -19,11 +19,9 @@ import static edu.coloradomesa.mytutor.Util.eq;
 
 public class LiteDB extends SQLiteOpenHelper implements AutoCloseable {
     public static class Lazy extends edu.coloradomesa.mytutor.Lazy < LiteDB > {
-        Context mContext;
         Lazy(Context context) {
-            mContext = context;
+            super(LiteDB.class, context);
         }
-        LiteDB create() { return new LiteDB(mContext); }
     }
 
     static class SCHEMA {

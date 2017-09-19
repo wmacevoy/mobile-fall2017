@@ -8,15 +8,15 @@ import android.support.v7.app.AppCompatActivity;
  */
 
 public class CoreActivity extends AppCompatActivity implements AutoCloseable {
-    Model mModel = new Model(this);
+    Model.Lazy mModel = new Model.Lazy(this);
     @Override public void close() { mModel.close(); }
     @Override public void onDestroy() {
         close();
         super.onDestroy();
     }
 
-    Prefs prefs() { return mModel.mPrefs.self(); }
-    LiteDB liteDB() { return mModel.mLiteDB.self(); }
-    User user() { return mModel.mUser.self(); }
-    Courses courses() { return mModel.mCourses.self(); }
+    Prefs prefs() { return mModel.self().prefs(); }
+    LiteDB liteDB() { return mModel.self().liteDB(); }
+    User user() { return mModel.self().user(); }
+    Courses courses() { return mModel.self().courses(); }
 }

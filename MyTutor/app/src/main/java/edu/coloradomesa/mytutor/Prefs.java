@@ -14,11 +14,9 @@ import static edu.coloradomesa.mytutor.Util.*;
 
 public class Prefs implements AutoCloseable {
     public static class Lazy extends edu.coloradomesa.mytutor.Lazy < Prefs > {
-        Context mContext;
         Lazy(Context context) {
-            mContext = context;
+            super(Prefs.class, context);
         }
-        Prefs create() { return new Prefs(mContext); }
     }
 
     public static final String PREFERENCES = "preferences";

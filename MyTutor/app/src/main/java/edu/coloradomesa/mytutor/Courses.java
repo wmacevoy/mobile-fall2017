@@ -17,11 +17,9 @@ public class Courses {
     }
 
     public static class Lazy extends edu.coloradomesa.mytutor.Lazy < Courses > {
-        LiteDB.Lazy mLiteDB;
         Lazy(LiteDB.Lazy liteDB) {
-            mLiteDB = liteDB;
+            super(Courses.class, liteDB);
         }
-        Courses create() { return new Courses(mLiteDB); }
     }
 
 

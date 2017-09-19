@@ -8,21 +8,18 @@ import static edu.coloradomesa.mytutor.Util.*;
  */
 
 public class User {
-    Prefs.Lazy mPrefs;
-    Prefs prefs() { return mPrefs.self(); }
+    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < User > {
+        Lazy(Prefs.Lazy prefs) {
+            super(User.class, prefs);
+        }
+    }
 
+    Prefs.Lazy mPrefs;
     User(Prefs.Lazy prefs) {
         mPrefs=prefs;
     }
 
-    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < User > {
-        Prefs.Lazy mPrefs;
-        Lazy(Prefs.Lazy prefs) {
-            mPrefs = prefs;
-        }
-        User create() { return new User(mPrefs); }
-    }
-
+    Prefs prefs() { return mPrefs.self(); }
 
     boolean exists(String user) {
         return eq(user, "foo@example.com") || eq(user,"bar@example.com") || eq(user,"admin@localhost");
@@ -65,9 +62,9 @@ public class User {
         prefs().save();
     }
 
-    boolean authenticated() { return mPrefs.self().authenticated(); }
-    String user() { return mPrefs.self().user(); }
-    boolean isUser() { return mPrefs.self().groups().contains("users"); }
-    boolean isAdmin() { return mPrefs.self().groups().contains("admins"); }
+    boolean authenticated() { return prefs().authenticated(); }
+    String user() { return prefs().user(); }
+    boolean isUser() { return prefs().groups().contains("users"); }
+    boolean isAdmin() { return prefs().groups().contains("admins"); }
 }
 

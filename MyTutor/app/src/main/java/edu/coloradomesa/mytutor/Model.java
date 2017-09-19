@@ -7,7 +7,21 @@ import android.content.Context;
  */
 
 public class Model implements AutoCloseable {
+    public static class Lazy extends edu.coloradomesa.mytutor.Lazy < Model > {
+        Lazy(Context context) {
+            super(Model.class, context);
+        }
+    }
+
     Context mContext;
+    Model(Context context) {
+        mContext = context;
+        mPrefs = new Prefs.Lazy(mContext);
+        mLiteDB = new LiteDB.Lazy(mContext);
+        mUser = new User.Lazy(mPrefs);
+        mCourses = new Courses.Lazy(mLiteDB);
+    }
+
     Context context() { return mContext; }
     Prefs.Lazy mPrefs;
     Prefs prefs() { return mPrefs.self(); }
@@ -18,13 +32,7 @@ public class Model implements AutoCloseable {
     Courses.Lazy mCourses;
     Courses courses() { return mCourses.self(); }
 
-    Model(Context context) {
-        mContext = context;
-        mPrefs = new Prefs.Lazy(mContext);
-        mLiteDB = new LiteDB.Lazy(mContext);
-        mUser = new User.Lazy(mPrefs);
-        mCourses = new Courses.Lazy(mLiteDB);
-    }
+
 
     @Override
     public void close() {

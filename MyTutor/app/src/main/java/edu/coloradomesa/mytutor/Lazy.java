@@ -2,13 +2,26 @@ package edu.coloradomesa.mytutor;
 
 import android.util.Log;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * Created by wmacevoy on 9/17/17.
  */
 
-public abstract class Lazy < T > implements AutoCloseable {
+public class Lazy < T > implements AutoCloseable {
+
+    private Object[] mArgs;
+    private Constructor<T> mConstructor;
+    public Lazy(Class<T> clazz, Object... args) {
+        mArgs = args;
+        mConstructor = (Constructor<T>) Reflect.getConstructor(clazz,args);
+    }
+
     private T mSelf;
-    T self() {
+    public T self() {
         if (mSelf == null) {
             synchronized (this) {
                 if (mSelf == null) {
@@ -18,18 +31,26 @@ public abstract class Lazy < T > implements AutoCloseable {
         }
         return mSelf;
     }
+
     public void close() {
         synchronized (this) {
             if (mSelf != null) {
                 T self = mSelf;
                 mSelf = null;
                 close(self);
-
             }
         }
     }
-    abstract T create();
-    void close(T self) {
+
+    protected T create() {
+        try {
+            return (T) mConstructor.newInstance(mArgs);
+        } catch (InstantiationException|IllegalAccessException|InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void close(T self) {
         if (self instanceof AutoCloseable) {
             try {
                 ((AutoCloseable) self).close();
