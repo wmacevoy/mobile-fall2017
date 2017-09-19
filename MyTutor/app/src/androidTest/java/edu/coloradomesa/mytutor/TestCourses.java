@@ -20,21 +20,26 @@ import static org.junit.Assert.assertEquals;
 public class TestCourses {
     Context context = InstrumentationRegistry.getTargetContext();
 
+    Courses courses() { return new Courses(new LiteDB.Lazy(context)); }
+
     @Test
     public void testCourses() {
-        try (Courses courses = new Courses(context)) {
+        try (LiteDB.Lazy db = new LiteDB.Lazy(context)) {
+            Courses courses = new Courses(db);
             courses.clear();
             assertEquals(true, courses.all().isEmpty());
         }
 
-        try (Courses courses = new Courses(context)) {
+        try (LiteDB.Lazy db = new LiteDB.Lazy(context)) {
+            Courses courses = new Courses(db);
             courses.add("CSCI",405);
             courses.add("ENGL",111);
             assertEquals(true, courses.all().contains(new Course("CSCI",405)));
             assertEquals(true, courses.all().contains(new Course("ENGL",111)));
         }
 
-        try (Courses courses = new Courses(context)) {
+        try (LiteDB.Lazy db = new LiteDB.Lazy(context)) {
+            Courses courses = new Courses(db);
             courses.add("CSCI",405);
             courses.add("ENGL",111);
             courses.remove("CSCI",405);

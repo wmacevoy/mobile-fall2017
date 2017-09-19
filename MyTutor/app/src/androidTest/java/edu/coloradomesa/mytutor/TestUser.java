@@ -20,7 +20,8 @@ public class TestUser {
 
     @Test
     public void testUserAuthenticate() {
-        try (User user = new User(context)) {
+        try (Prefs.Lazy prefs = new Prefs.Lazy(context)) {
+            User user = new User(prefs);
             assertEquals(true, user.authenticate("foo@example.com", "hello"));
             assertEquals(true, user.authenticate("bar@example.com", "world"));
             assertEquals(true, user.authenticate("admin@localhost", "secret"));
@@ -30,7 +31,8 @@ public class TestUser {
 
     @Test
     public void testUserLogin() {
-        try (User user = new User(context)) {
+        try (Prefs.Lazy prefs = new Prefs.Lazy(context)) {
+            User user = new User(prefs);
             assertEquals(true, user.login("foo@example.com"));
             assertEquals("foo@example.com",user.user());
             assertEquals(true, user.authenticated());
@@ -59,7 +61,8 @@ public class TestUser {
 
     @Test
     public void testUserLogout() {
-        try (User user = new User(context)) {
+        try (Prefs.Lazy prefs = new Prefs.Lazy(context)) {
+            User user = new User(prefs);
             user.login("admin");
             user.logout();
 
