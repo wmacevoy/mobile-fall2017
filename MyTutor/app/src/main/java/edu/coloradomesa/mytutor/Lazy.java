@@ -20,7 +20,7 @@ public class Lazy < T > implements AutoCloseable {
         mConstructor = (Constructor<T>) Reflect.getConstructor(clazz,args);
     }
 
-    private T mSelf;
+    private T mSelf = null;
     public T self() {
         if (mSelf == null) {
             synchronized (this) {
