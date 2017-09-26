@@ -8,6 +8,8 @@
 
     <string name="menu_logout">Log Out</string>
 
+    <string name="auth_failed">You messed up again!</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>

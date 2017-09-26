@@ -1,6 +1,10 @@
 package edu.coloradomesa.mytutor;
 
 import android.content.Context;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import static edu.coloradomesa.mytutor.Util.*;
 
 /**
@@ -8,11 +12,16 @@ import static edu.coloradomesa.mytutor.Util.*;
  */
 
 public class User {
+
+    FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+
     public static class Lazy extends edu.coloradomesa.mytutor.Lazy < User > {
         Lazy(Prefs.Lazy prefs) {
             super(User.class, prefs);
         }
     }
+
+    String name() { return fbUser.getDisplayName(); }
 
     Prefs.Lazy mPrefs;
     User(Prefs.Lazy prefs) {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuView;
 import android.util.Log;
 import android.view.Menu;
@@ -13,7 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends CoreActivity {
-    public static final String APP = "MyTutor";
+
 
     public static final int LOGIN_REQUEST = 1;
 
@@ -46,12 +45,12 @@ public class MainActivity extends CoreActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        Log.i(APP,"request = " + requestCode + " result = " + resultCode + " (ok=" + RESULT_OK + ")");
+        Log.i(TAG,"request = " + requestCode + " result = " + resultCode + " (ok=" + RESULT_OK + ")");
         switch(requestCode) {
             case LOGIN_REQUEST:
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                Log.i(APP, "user is " + user().user());
+                Log.i(TAG, "user is " + user().user());
 
                 // The user picked a contact.
                 // The Intent's data Uri identifies which contact was selected.
@@ -62,7 +61,7 @@ public class MainActivity extends CoreActivity {
             }
             break;
             default:
-                Log.i(APP, "no result handler");
+                Log.i(TAG, "no result handler");
         }
     }
 

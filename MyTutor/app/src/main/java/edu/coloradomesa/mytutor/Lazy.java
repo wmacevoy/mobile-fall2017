@@ -4,8 +4,6 @@ import android.util.Log;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by wmacevoy on 9/17/17.
@@ -55,7 +53,7 @@ public class Lazy < T > implements AutoCloseable {
             try {
                 ((AutoCloseable) self).close();
             } catch (Exception ex) {
-                Log.e(MainActivity.APP, "Exception " + ex + " closing " + self);
+                Log.e(MainActivity.TAG, "Exception " + ex + " closing " + self);
             }
         }
     }
