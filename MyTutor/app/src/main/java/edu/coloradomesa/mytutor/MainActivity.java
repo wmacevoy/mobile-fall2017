@@ -11,6 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 public class MainActivity extends CoreActivity {
 
 
@@ -94,6 +100,37 @@ public class MainActivity extends CoreActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        tests();
+    }
+    void testReadUsers() {
+        DatabaseReference mDatabase;
+// ...
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        DatabaseReference users = mDatabase.child("users");
+
+        ValueEventListener usersListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                edu.coloradomesa.db.User user = dataSnapshot.getValue(edu.coloradomesa.db.User.class);
+                Log.i(TAG,"username = " + user.username);
+                // ...
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        users.addValueEventListener(usersListener);
+
+    }
+    void tests() {
+        testReadUsers();
     }
 
     @Override

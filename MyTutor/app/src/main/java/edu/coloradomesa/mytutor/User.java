@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import static edu.coloradomesa.mytutor.Util.*;
 
@@ -31,7 +33,14 @@ public class User {
     Prefs prefs() { return mPrefs.self(); }
 
     boolean exists(String user) {
-        return eq(user, "foo@example.com") || eq(user,"bar@example.com") || eq(user,"admin@localhost");
+// valid users must be readable as an unathenticated user for this to work (firebase->db console->database [rules tab]
+        DatabaseReference mDatabase;
+// Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Hello, World!");
+        return false;
     }
 
     boolean authenticate(String user, String password) {
