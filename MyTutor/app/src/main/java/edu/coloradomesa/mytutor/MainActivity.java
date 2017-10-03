@@ -114,8 +114,12 @@ public class MainActivity extends CoreActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                edu.coloradomesa.db.User user = dataSnapshot.getValue(edu.coloradomesa.db.User.class);
-                Log.i(TAG,"username = " + user.username);
+                Log.i(TAG,"snap=" + dataSnapshot);
+                for (DataSnapshot item : dataSnapshot.getChildren()) {
+                    Log.i(TAG,"item = " + item);
+                    edu.coloradomesa.db.User user = item.getValue(edu.coloradomesa.db.User.class);
+                    Log.i(TAG,"username = " + user.username);
+                }
                 // ...
             }
 
