@@ -1,6 +1,7 @@
 package edu.coloradomesa.mytutor;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,11 +12,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.File;
 
 public class MainActivity extends CoreActivity {
 
@@ -103,6 +110,29 @@ public class MainActivity extends CoreActivity {
 
         tests();
     }
+
+    void testStorage() {
+        File dir = new File(getApplicationInfo().dataDir);
+        File beepFile = new File(dir, "beep.m4a");
+        Uri file = Uri.fromFile(beepFile);
+        StorageReference beepRef = mStorageRef.child("sounds/beep.m4a");
+
+        beepRef.putFile(file)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        // ...
+                    }
+                });
+    }
     void testReadUsers() {
         DatabaseReference mDatabase;
 // ...
@@ -134,7 +164,9 @@ public class MainActivity extends CoreActivity {
 
     }
     void tests() {
+
         testReadUsers();
+        testStorage();
     }
 
     @Override
