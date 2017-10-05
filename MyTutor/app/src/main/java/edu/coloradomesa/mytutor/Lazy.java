@@ -18,6 +18,11 @@ public class Lazy < T > implements AutoCloseable {
         mConstructor = (Constructor<T>) Reflect.getConstructor(clazz,args);
     }
 
+    public Lazy() {
+        mArgs = null;
+        mConstructor = null;
+    }
+
     private T mSelf = null;
     public T self() {
         if (mSelf == null) {

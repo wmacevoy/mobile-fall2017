@@ -22,6 +22,9 @@ import java.io.OutputStream;
  */
 
 public class CoreActivity extends AppCompatActivity implements AutoCloseable {
+    private static CoreActivity activity;
+    public static CoreActivity activity() { return activity; }
+
     public static final String TAG = "MyTutor";
     Model.Lazy mModel = new Model.Lazy(this);
     @Override public void close() { mModel.close(); }
@@ -30,7 +33,7 @@ public class CoreActivity extends AppCompatActivity implements AutoCloseable {
         super.onDestroy();
     }
 
-    StorageReference mStorageRef;
+    public StorageReference mStorageRef;
 
 
     Prefs prefs() { return mModel.self().prefs(); }
@@ -41,6 +44,7 @@ public class CoreActivity extends AppCompatActivity implements AutoCloseable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         initFilesIfMissing();
         mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference();
@@ -85,7 +89,7 @@ public class CoreActivity extends AppCompatActivity implements AutoCloseable {
     void onSignOut() {
 
     }
-    FirebaseAuth mAuth;
+    public FirebaseAuth mAuth;
 
     FirebaseAuth.AuthStateListener mAuthListener;
 

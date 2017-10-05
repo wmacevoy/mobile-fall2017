@@ -111,28 +111,7 @@ public class MainActivity extends CoreActivity {
         tests();
     }
 
-    void testStorage() {
-        File dir = new File(getApplicationInfo().dataDir);
-        File beepFile = new File(dir, "beep.m4a");
-        Uri file = Uri.fromFile(beepFile);
-        StorageReference beepRef = mStorageRef.child("sounds/beep.m4a");
 
-        beepRef.putFile(file)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-                        // Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        // ...
-                    }
-                });
-    }
     void testReadUsers() {
         DatabaseReference mDatabase;
 // ...
@@ -147,7 +126,7 @@ public class MainActivity extends CoreActivity {
                 Log.i(TAG,"snap=" + dataSnapshot);
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
                     Log.i(TAG,"item = " + item);
-                    edu.coloradomesa.db.User user = item.getValue(edu.coloradomesa.db.User.class);
+                    edu.coloradomesa.fb.User user = item.getValue(edu.coloradomesa.fb.User.class);
                     Log.i(TAG,"username = " + user.username);
                 }
                 // ...
@@ -165,8 +144,8 @@ public class MainActivity extends CoreActivity {
     }
     void tests() {
 
-        testReadUsers();
-        testStorage();
+        // testReadUsers();
+        // testStorage();
     }
 
     @Override

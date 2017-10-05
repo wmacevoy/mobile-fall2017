@@ -1,5 +1,7 @@
 package edu.coloradomesa.mytutor;
 
+import android.util.Log;
+
 /**
  * Created by wmacevoy on 9/12/17.
  */
@@ -17,4 +19,48 @@ public class Util {
         return a.equals(b);
     }
 
+    public static int cmp(CharSequence a, CharSequence b) {
+        if (a == null || b == null) {
+            if (a == null && b != null) return -1;
+            if (a != null && b == null) return  1;
+            return 0;
+        }
+
+        int i = 0;
+        int na = a.length();
+        int nb = b.length();
+        int n = Math.min(na,nb);
+        for (;;) {
+            int cpA = Character.codePointAt(a,i);
+            int cpB = Character.codePointAt(b,i);
+            if (cpA != cpB) { return cpA < cpB ? -1 : 1; }
+            i = i + Character.charCount(cpA);
+            if (i >= n) break;
+        }
+        if (na < nb) return -1;
+        if (nb < na) return  1;
+        return 0;
+    }
+
+    public static void i(String message) {
+        Log.i(CoreActivity.TAG,message);
+    }
+    public static void e(String message) {
+        Log.e(CoreActivity.TAG,message);
+    }
+    public static void w(String message) {
+        Log.w(CoreActivity.TAG,message);
+    }
+
+    public static void d(String message) {
+        Log.d(CoreActivity.TAG,message);
+    }
+
+    public static void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException ex) {
+            i("sleep interrupted");
+        }
+    }
 }
