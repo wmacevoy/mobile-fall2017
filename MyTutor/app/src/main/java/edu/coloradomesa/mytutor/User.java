@@ -33,7 +33,7 @@ public class User {
     Prefs prefs() { return mPrefs.self(); }
 
     boolean exists(String user) {
-// valid users must be readable as an unathenticated user for this to work (firebase->db console->database [rules tab]
+// valid messages must be readable as an unathenticated user for this to work (firebase->db console->database [rules tab]
         DatabaseReference mDatabase;
 // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -58,13 +58,13 @@ public class User {
             case "bar@example.com":
                 prefs().authenticated(true);
                 prefs().user(user);
-                prefs().groups("users");
+                prefs().groups("messages");
                 prefs().save();
                 break;
             case "admin@localhost":
                 prefs().authenticated(true);
                 prefs().user("admin@localhost");
-                prefs().groups("admins","users");
+                prefs().groups("admins","messages");
                 prefs().save();
                 break;
             default:
@@ -82,7 +82,7 @@ public class User {
 
     boolean authenticated() { return prefs().authenticated(); }
     String user() { return prefs().user(); }
-    boolean isUser() { return prefs().groups().contains("users"); }
+    boolean isUser() { return prefs().groups().contains("messages"); }
     boolean isAdmin() { return prefs().groups().contains("admins"); }
 }
 

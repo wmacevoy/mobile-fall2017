@@ -1,7 +1,10 @@
 package edu.coloradomesa.mytutor;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,20 +15,60 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
+import org.w3c.dom.Text;
+
+import java.util.Arrays;
+
+import edu.coloradomesa.fb.Message;
 
 public class MainActivity extends CoreActivity {
 
+    class AccelerometerManager implements SensorEventListener {
+        private Sensor mAccelerometer;
+
+        void onCreate() {
+
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        }
+
+        void onResume() {
+            mSensorManager.registerListener(this, mAccelerometer,SensorManager.SENSOR_DELAY_NORMAL);
+            Log.i(TAG, "registered listener");
+        }
+
+        void onPause() {
+            mSensorManager.unregisterListener(this);
+        }
+        @Override
+        public void onSensorChanged(final SensorEvent sensorEvent) {
+            Log.i(TAG, "sensorEvent: " + Arrays.toString(sensorEvent.values));
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mTextMessage.setText(Arrays.toString(sensorEvent.values));
+                }
+            });
+
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    }
+
+    private SensorManager mSensorManager;
+    private AccelerometerManager mAccelerometerManager;
+    public MainActivity() {
+
+    }
 
     public static final int LOGIN_REQUEST = 1;
 
@@ -96,7 +139,6 @@ public class MainActivity extends CoreActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,8 +150,14 @@ public class MainActivity extends CoreActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometerManager = new AccelerometerManager();
+        mAccelerometerManager.onCreate();
+
         tests();
     }
+
+
 
 
     void testReadUsers() {
@@ -117,7 +165,7 @@ public class MainActivity extends CoreActivity {
 // ...
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        DatabaseReference users = mDatabase.child("users");
+        DatabaseReference users = mDatabase.child("messages");
 
         ValueEventListener usersListener = new ValueEventListener() {
             @Override
@@ -126,8 +174,8 @@ public class MainActivity extends CoreActivity {
                 Log.i(TAG,"snap=" + dataSnapshot);
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
                     Log.i(TAG,"item = " + item);
-                    edu.coloradomesa.fb.User user = item.getValue(edu.coloradomesa.fb.User.class);
-                    Log.i(TAG,"username = " + user.username);
+                    Message message = item.getValue(Message.class);
+                    Log.i(TAG,"subject = " + message.subject);
                 }
                 // ...
             }
@@ -152,6 +200,13 @@ public class MainActivity extends CoreActivity {
     public void onResume() {
         super.onResume();
         if (!user().authenticated()) { login(); }
+        mAccelerometerManager.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mAccelerometerManager.onPause();
     }
 
     void login() {
@@ -163,5 +218,6 @@ public class MainActivity extends CoreActivity {
         user().logout();
         recreate();
     }
+
 
 }

@@ -42,7 +42,7 @@ import java.util.List;
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers login via email/body.
  */
 public class LoginActivity extends CoreActivity implements LoaderCallbacks<Cursor> {
 
@@ -164,7 +164,7 @@ public class LoginActivity extends CoreActivity implements LoaderCallbacks<Curso
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid body, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;

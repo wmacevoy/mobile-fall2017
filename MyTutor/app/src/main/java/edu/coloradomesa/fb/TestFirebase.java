@@ -1,6 +1,5 @@
 package edu.coloradomesa.fb;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -8,31 +7,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.junit.runner.Result;
-import org.junit.runner.RunWith;
 import org.junit.runners.model.Statement;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Date;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import edu.coloradomesa.mytutor.*;
 
@@ -54,7 +45,7 @@ public class TestFirebase  {
 
     @Test public  void testHello() {
         i("testHello");
-        // valid users must be readable as an unathenticated user for this to work (firebase->db console->database [rules tab]
+        // valid messages must be readable as an unathenticated user for this to work (firebase->db console->database [rules tab]
         DatabaseReference mDatabase;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("message");
@@ -107,82 +98,82 @@ public class TestFirebase  {
     @Test
     public void testUsersEmpty() {
         i("testUserEmpty");
-        model().users().reset();
-        Collection<User> users = model().users().all();
-        assertEquals(true, users.isEmpty());
+        model().messages().reset(false);
+        Collection<Message> messages = model().messages().all();
+        assertEquals(true, messages.isEmpty());
     }
 
     @Test
     public void testUsersInsert() {
         i("testUserInsert");
-        model().users().reset();
-        model().users().insert(new User(null,"alice","a"));
-        model().users().insert(new User(null,"bob","b"));
-        model().users().insert(new User(null,"cindy","c"));
-        Collection<User> users = model().users().all();
-        assertEquals(true, users.contains(new User(null, "alice","a")));
-        assertEquals(true, users.contains(new User(null, "bob","b")));
-        assertEquals(true, users.contains(new User(null, "cindy","c")));
+        model().messages().reset(false);
+        model().messages().insert(new Message(null,"alice","a"));
+        model().messages().insert(new Message(null,"bob","b"));
+        model().messages().insert(new Message(null,"cindy","c"));
+        Collection<Message> messages = model().messages().all();
+        assertEquals(true, messages.contains(new Message(null, "alice","a")));
+        assertEquals(true, messages.contains(new Message(null, "bob","b")));
+        assertEquals(true, messages.contains(new Message(null, "cindy","c")));
     }
 
 
     @Test
     public void testUsersDeleteByUsername() {
         i("testUserDeleteByUsername");
-        model().users().reset();
-        model().users().insert(new User(null,"alice","a"));
-        model().users().insert(new User(null,"bob","b"));
-        model().users().insert(new User(null,"cindy","c"));
-        model().users().delete(new User(null,"bob",null));
-        Collection<User> users = model().users().all();
-        assertEquals(true, users.contains(new User(null, "alice","a")));
-        assertEquals(false, users.contains(new User(null, "bob","b")));
-        assertEquals(true, users.contains(new User(null, "cindy","c")));
+        model().messages().reset(false);
+        model().messages().insert(new Message(null,"alice","a"));
+        model().messages().insert(new Message(null,"bob","b"));
+        model().messages().insert(new Message(null,"cindy","c"));
+        model().messages().delete(new Message(null,"bob",null));
+        Collection<Message> messages = model().messages().all();
+        assertEquals(true, messages.contains(new Message(null, "alice","a")));
+        assertEquals(false, messages.contains(new Message(null, "bob","b")));
+        assertEquals(true, messages.contains(new Message(null, "cindy","c")));
     }
 
     @Test
     public void testCoursesDeleteById() {
         i("testCourseDeleteById");
-        model().users().reset();
-        model().users().insert(new User(null,"alice","a"));
-        model().users().insert(new User(null,"bob","b"));
-        model().users().insert(new User(null,"cindy","c"));
+        model().messages().reset(false);
+        model().messages().insert(new Message(null,"alice","a"));
+        model().messages().insert(new Message(null,"bob","b"));
+        model().messages().insert(new Message(null,"cindy","c"));
 
-        for (User user : model().users().all()) {
-            if (user.username.equals("bob") == false) {
-                model().users().delete(user.id);
+        for (Message message : model().messages().all()) {
+            if (message.subject.equals("bob") == false) {
+                model().messages().delete(message.id);
             }
         }
 
-        Collection<User> users = model().users().all();
-        assertEquals(false, users.contains(new User(null, "alice","a")));
-        assertEquals(true, users.contains(new User(null, "bob","b")));
-        assertEquals(false, users.contains(new User(null, "cindy","c")));
+        Collection<Message> messages = model().messages().all();
+        assertEquals(false, messages.contains(new Message(null, "alice","a")));
+        assertEquals(true, messages.contains(new Message(null, "bob","b")));
+        assertEquals(false, messages.contains(new Message(null, "cindy","c")));
     }
 
-    @Test public void testStorage() {
+    public void testStorage() {
         i("testStorage");
         loginAsTestUser();
         File dir = new File(activity.getApplicationInfo().dataDir);
         File beepFile = new File(dir, "beep.m4a");
         Uri file = Uri.fromFile(beepFile);
-        StorageReference beepRef = activity.mStorageRef.child("sounds/beep.m4a");
+        //StorageReference beepRef = activity.mStorageRef.child("sounds/beep.m4a");
 
-        beepRef.putFile(file)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get a URL to the uploaded content
-                        // Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                        // ...
-                    }
-                });
+        //beepRef.putFile(file)
+        //        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        //            @Override
+        //            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        //                // Get a URL to the uploaded content
+        //                // Uri downloadUrl = taskSnapshot.getDownloadUrl();
+        //            }
+        //        })
+        //        .addOnFailureListener(new OnFailureListener() {
+        //            @Override
+        //            public void onFailure(@NonNull Exception exception) {
+        //                // Handle unsuccessful uploads
+        //                // ...
+        //            }
+        //        });
     }
 
     @Rule

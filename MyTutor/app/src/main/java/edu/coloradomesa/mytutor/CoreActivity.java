@@ -22,9 +22,6 @@ import java.io.OutputStream;
  */
 
 public class CoreActivity extends AppCompatActivity implements AutoCloseable {
-    private static CoreActivity activity;
-    public static CoreActivity activity() { return activity; }
-
     public static final String TAG = "MyTutor";
     Model.Lazy mModel = new Model.Lazy(this);
     @Override public void close() { mModel.close(); }
@@ -33,7 +30,7 @@ public class CoreActivity extends AppCompatActivity implements AutoCloseable {
         super.onDestroy();
     }
 
-    public StorageReference mStorageRef;
+   // public StorageReference mStorageRef;
 
 
     Prefs prefs() { return mModel.self().prefs(); }
@@ -44,21 +41,20 @@ public class CoreActivity extends AppCompatActivity implements AutoCloseable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = this;
         initFilesIfMissing();
         mAuth = FirebaseAuth.getInstance();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
+        // mStorageRef = FirebaseStorage.getInstance().getReference();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in
+                    // Message is signed in
                     onSignIn();
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     onSignOut();
-                    // User is signed out
+                    // Message is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
                 // ...
